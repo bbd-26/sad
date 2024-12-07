@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #login-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 350px;
+            text-align: center;
+            margin: 0 auto; /* 將左右 margin 設為 auto，使其水平置中 */
+            border-radius: 8px;
+        }
+
+        #brand-container, #management-container, #management-result {
+            display: none; /* 初始隱藏 */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 350px;
+            text-align: center;
+            margin: 0 auto; /* 將左右 margin 設為 auto，使其水平置中 */
+            border-radius: 8px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            justify-content: space-between;
+        }
+
+        #login-container div, #button-container div {
+            margin-bottom: 15px; /* 調整每一行之間的距離 */
+        }
+
+        #login-container label, #button-container label {
+            margin-right: 10px;
+        }
+
+        label {
+            text-align: left;
+            margin-bottom: 8px;
+        }
+
+        select, input {
+            width: 70%;
+            padding: 8px;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 50%;
+        }
+
+        /* #management-result button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 33%;
+        } */
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #button-container {
+            display: flex;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+
+        .brand-button, .management-button {
+            flex: 1;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .brand-button:last-child, .management-button:last-child {
+            margin-left: 15px; /* Adjust as needed */
+        }
+
+        .score, .result {
+            flex: 1; /* 填满剩余的空间 */
+            text-align: center;
+            background-color: #f2f2f2; /* 淺灰色背景 */
+            padding: 5px; /* 調整內邊距 */
+            border-radius: 4px; /* 圓角 */
+            margin-left: 10px; /* 可调整间距 */
+        }
+
+    </style>
+</head>
+<body>
+    <div id="login-container">
+        <div class='row'>
+            <label for="identity">身分別：</label>
+            <select id="identity" onchange="toggleContainers()">
+                <option value="brand">品牌</option>
+                <option value="management">管理</option>
+            </select>
+        </div>
+
+        <div class='row'>
+            <label for="account">帳　號：</label>
+            <input type="text" id="account" placeholder="輸入帳號">
+        </div>
+
+        <div class='row'>
+            <label for="password">密　碼：</label>
+            <input type="password" id="password" placeholder="輸入密碼">
+        </div>
+
+        <div id="button-container">
+            <button class="brand-button" onclick="login()">Login</button>
+            <button class="brand-button" onclick="enroll()">enroll</button>
+        </div>
+    </div>
+
+    <!-- Add this div for the brand-specific interface -->
+    <div id="brand-container">
+        <div class='row'>
+            <label for="goodsNumber">貨物編號：</label>
+            <input type="text" id="goodsNumber" placeholder="輸入貨物編號">
+        </div>
+
+        <div class='row'>
+            <label for="goodsInfo">貨物資訊：</label>
+            <input type="file" id="goodsInfo">
+        </div>
+
+        <div id="button-container">
+            <button class="brand-button" onclick="cancel()">Logout</button>
+            <button class="brand-button" onclick="uploadBrandInfo()">Submit</button>
+        </div>
+    </div>
+
+    <!-- Add this div for the management-specific interface -->
+    <div id="management-container">
+        <div class="row">
+            <label for="supplier">　供應商：</label>
+            <input type="text" id="supplier" placeholder="輸入供應商">
+        </div>
+
+        <div class="row">
+            <label for="goodsNumber">貨物編號：</label>
+            <input type="text" id="goodsNumberM" placeholder="輸入供應商">
+
+        </div>
+
+        <div class="row">
+            <label for="goodsInfo">貨物資訊：</label>
+            <input type="file" id="goodsInfoM">
+        </div>
+
+        <div id="button-container">
+            <button class="brand-button" onclick="cancel()">Logout</button>
+            <button class="brand-button" onclick="uploadManagementInfo()">Submit</button>
+        </div>
+
+        <div id="button-container">
+            <button id="check-result-button" class="management-button" onclick="checkResult()" disabled>Check Result</button>
+        </div>
+
+    </div>
+
+    <!-- Add this div for the management result interface -->
+    <div id="management-result">
+        <div class="row">
+            <label for="component">成分：</label>
+            <label class="score" for="score1" id="result1"></label>
+        </div>
+
+        <div class="row">
+            <label for="logo">Logo：</label>
+            <label class="score" for="score1" id="result2"></label>
+        </div>
+
+        <div class="row">
+            <label for="antiForgeryLabel">防偽標籤：</label>
+            <label class="score" for="score1" id="result3"></label>
+        </div>
+
+        <div class="row">
+            <label for="total">Total：</label>
+            <label class="score" for="score1" id="result4"></label>
+        </div>
+
+        <div class="row">
+            <label for="result">結果：</label>
+            <label class="result" id="result5"></label>
+        </div>
+
+        <div id="button-container">
+            <button class="management-button" onclick="cancel()">回上頁</button>
+            <button class="management-button" onclick="exportToTxt()">輸出成 txt</button>
+        </div>
+
+        <div id="button-container">
+            <button class="management-button" onclick="confirmManagement()">確認</button>
+        </div>
+
+    </div>
+
+
+    <script>
+        function login() {
+            console.log('Login button clicked.');
+            var identity = document.getElementById('identity').value;
+            var account = document.getElementById('account').value;
+            var password = document.getElementById('password').value;
+
+            // 建立 POST 請求的 payload
+            var data = {
+                identity: identity,
+                account: account,
+                password: password
+            };
+
+            // 使用 fetch 進行 POST 請求
+            fetch('http://localhost:9009/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                // 根據伺服器的回應執行相應的邏輯
+                if (data.success) {
+                    console.log('Login success !');
+                    console.log('帳號:', data.account);
+                    console.log('密碼:', data.password);
+                    // 登入成功，繼續執行相應的邏輯
+                    // ...
+
+                    // 隱藏 login-container
+                    document.getElementById('login-container').style.display = 'none';
+
+                    // 根據身分別顯示相應的 container
+                    if (identity === 'brand') {
+                        document.getElementById('brand-container').style.display = 'block';
+                    } else if (identity === 'management') {
+                        document.getElementById('management-container').style.display = 'block';
+                    }
+                } else {
+                    console.log('Login failed.');
+                    // 登入失敗，顯示提示
+                    alert('帳號或密碼錯誤');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+        function cancel() {
+            toggleContainers();
+            document.getElementById('login-container').style.display = 'block';
+        }
+
+        function submitBrand() {
+            console.log('Brand submitted.');
+
+            // 獲取表單資料
+            var goodsNumber = document.getElementById('goodsNumber').value;
+            var goodsInfoFile = document.getElementById('goodsInfo').files[0]; // 取得檔案
+
+            // 檢查是否填寫完整
+            if (!goodsNumber || !goodsInfoFile) {
+                alert('請填寫完整資訊');
+                return;
+            }
+
+            // 使用 FormData 物件，將檔案內容轉換為字串
+            var formData = new FormData();
+            formData.append('goodsNumber', goodsNumber);
+            formData.append('goodsInfo', goodsInfoFile);
+
+            // 使用 fetch 進行 POST 請求
+            fetch('http://localhost:9009/brand', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                // 根據伺服器的回應執行相應的邏輯
+                if (data.success) {
+                    console.log('Upload success!');
+                } else {
+                    console.log('Upload failed.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        async function uploadManagementInfo() {
+            const supplier = document.getElementById('supplier').value;
+            const goodsNumber = document.getElementById('goodsNumberM').value;
+            const goodsInfoFile = document.getElementById('goodsInfoM').files[0];
+
+            if (!supplier || !goodsNumber || !goodsInfoFile) {
+                alert('請填寫完整資訊');
+                return;
+            }
+
+            try {
+                // 讀取上傳的貨物資訊
+                const goodsInfo = await readFile(goodsInfoFile);
+
+                // 將資料包裝成物件
+                const data = {
+                    supplier: supplier,
+                    goodsNumber: goodsNumber,
+                    goodsInfo: goodsInfo  // 確保 goodsInfo 是字串
+                };
+
+                // 使用 fetch 進行 POST 請求
+                const response = await fetch('http://localhost:9009/management', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log('Upload success!');
+                    alert('上傳成功');
+
+                    // 在上傳成功後啟用 check result 按鈕
+                    document.getElementById('check-result-button').disabled = false;
+                } else {
+                    console.log('Upload failed.');
+                    alert('上傳失敗');
+                }
+
+                
+
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('發生錯誤');
+            }
+        }
+
+        function checkResult() {
+            // 在這裡處理 check result 的邏輯
+            fetch('http://localhost:9009/result')
+                .then(response => {
+                    // 確認請求成功
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // 解析返回的文字
+                    return response.text();
+                })
+                .then(data => {
+                    // 將後端的回應顯示在頁面上
+                    alert('上傳成功' );
+
+                    const numbersArray = data.split(' ');
+
+                    document.getElementById('result1').textContent = numbersArray[0];
+                    document.getElementById('result2').textContent = numbersArray[1];
+                    document.getElementById('result3').textContent = numbersArray[2];
+                    document.getElementById('result4').textContent = numbersArray[3];
+                    document.getElementById('result5').textContent = numbersArray[4];
+                    
+                    document.getElementById('management-container').style.display = 'none';
+                    document.getElementById('management-result').style.display = 'block';
+
+                    
+                })
+                .catch(error => {
+                    console.error('發生錯誤:', error);
+                    alert('發生錯誤:'+ error);
+                });
+        }
+
+        // function submitManagement() {
+        //     console.log('Brand submitted.');
+        //     // Add your submit logic here
+        //     document.getElementById('management-container').style.display = 'none';
+        //     document.getElementById('management-result').style.display = 'block';
+        // }
+
+        function toggleContainers() {
+            document.getElementById('brand-container').style.display = 'none';
+            document.getElementById('management-container').style.display = 'none';
+        }
+
+         // 共用的函數: 讀取檔案並回傳 Promise
+         function readFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => resolve(event.target.result);
+                reader.onerror = (error) => reject(error);
+                reader.readAsText(file);
+            });
+        }
+
+        // 品牌頁面上傳貨物資訊
+
+
+        // 管理頁面上傳貨物資訊
+        // 品牌頁面上傳貨物資訊
+        async function uploadBrandInfo() {
+            const goodsNumber = document.getElementById('goodsNumber').value;
+            const goodsInfoFile = document.getElementById('goodsInfo').files[0];
+
+            if (!goodsNumber || !goodsInfoFile) {
+                alert('請填寫完整資訊');
+                return;
+            }
+
+            try {
+                // 讀取上傳的貨物資訊
+                const goodsInfo = await readFile(goodsInfoFile);
+
+                // 將資料包裝成物件
+                const data = {
+                    goodsNumber: goodsNumber,
+                    goodsInfo: goodsInfo  // 確保 goodsInfo 是字串
+                };
+
+                // 使用 fetch 進行 POST 請求
+                const response = await fetch('http://localhost:9009/brand', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log('Upload success!');
+                    alert('上傳成功');
+                } else {
+                    console.log('Upload failed.');
+                    alert('上傳失敗');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('發生錯誤');
+            }
+        }
+
+
+
+    </script>
+</body>
+</html>
